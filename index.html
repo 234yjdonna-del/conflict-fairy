@@ -125,11 +125,13 @@
       transition: all 0.3s;
       box-shadow: 0 4px 15px rgba(139, 115, 85, 0.3);
       font-weight: 600;
+      display: inline-block;
     }
 
     .submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+      background: linear-gradient(135deg, #6d5a45 0%, #5a4a38 100%);
     }
 
     .submit-btn:active {
@@ -275,6 +277,16 @@
       color: #a0876f;
     }
 
+    .debug-info {
+      background: #f0f0f0;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 10px;
@@ -343,7 +355,8 @@
 문제는 어떻게 해결되었을까요?
 
 자유롭게 상상해서 이야기의 결말을 완성해보세요."></textarea>
-      <button class="submit-btn" id="submitBtn">🧚 요정에게 보내기</button>
+      <button class="submit-btn" id="submitBtn" type="button">🧚 요정에게 보내기</button>
+      <div class="debug-info" id="debugInfo">테스트 모드</div>
     </div>
 
     <div class="loading" id="loadingSection">
@@ -367,6 +380,9 @@
   </div>
 
   <script>
+    console.log('스크립트 로드됨!');
+
+    // DOM 요소
     const submitBtn = document.getElementById('submitBtn');
     const userEndingInput = document.getElementById('userEnding');
     const loadingSection = document.getElementById('loadingSection');
@@ -374,8 +390,21 @@
     const praiseContent = document.getElementById('praiseContent');
     const feedbackContent = document.getElementById('feedbackContent');
     const fragmentReward = document.getElementById('fragmentReward');
+    const debugInfo = document.getElementById('debugInfo');
 
-    submitBtn.addEventListener('click', async () => {
+    console.log('버튼 찾기:', submitBtn);
+
+    // 버튼 클릭 이벤트
+    if (submitBtn) {
+      submitBtn.addEventListener('click', handleSubmit);
+      console.log('이벤트 리스너 등록 완료!');
+    } else {
+      console.error('버튼을 찾을 수 없습니다!');
+    }
+
+    async function handleSubmit() {
+      console.log('버튼 클릭됨!');
+
       const userEnding = userEndingInput.value.trim();
 
       if (!userEnding) {
@@ -400,48 +429,65 @@
       loadingSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       try {
+        console.log('API 호출 시작...');
+
         const response = await fetch('/.netlify/functions/analyze-ending', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ userEnding })
+          body: JSON.stringify({ userEnding: userEnding })
         });
 
+        console.log('응답 상태:', response.status);
+
         if (!response.ok) {
-          throw new Error('분석 실패');
+          const errorText = await response.text();
+          console.error('에러 응답:', errorText);
+          throw new Error('분석 실패: ' + response.status);
         }
 
         const result = await response.json();
+        console.log('결과:', result);
 
         // 피드백 표시
         displayFeedback(result);
 
       } catch (error) {
         console.error('Error:', error);
-        alert('요정이 잠시 쉬고 있어요. 다시 시도해주세요! 🙏');
+        alert('요정이 잠시 쉬고 있어요. 다시 시도해주세요! 🙏\n\n에러: ' + error.message);
       } finally {
         // 버튼 다시 활성화
         submitBtn.disabled = false;
         submitBtn.textContent = '🧚 요정에게 보내기';
         loadingSection.classList.remove('show');
       }
-    });
+    }
 
     function displayFeedback(result) {
-      // 피드백 내용 채우기
-      praiseContent.innerHTML = result.praise.replace(/
-/g, '<br>');
+      console.log('피드백 표시:', result);
 
-      let feedbackHTML = result.feedback.replace(/
-/g, '<br>');
+      // 피드백 내용 채우기
+      praiseContent.innerHTML = result.praise.replace(/\n/g, '<br>');
+
+      let feedbackHTML = result.feedback.replace(/\n/g, '<br>');
 
       // needsRethink 메시지 처리
       if (result.needsRethink) {
         feedbackHTML = feedbackHTML.replace('✨ 우리 다시 생각해 볼까요?', '');
         feedbackContent.innerHTML = feedbackHTML;
-        feedbackContent.insertAdjacentHTML('afterend', 
-          '<div class="rethink-message">✨ 우리 다시 생각해 볼까요?</div>');
+
+        // 기존 메시지 제거
+        const existingRethink = feedbackContent.parentElement.querySelector('.rethink-message');
+        if (existingRethink) {
+          existingRethink.remove();
+        }
+
+        // 새 메시지 추가
+        const rethinkDiv = document.createElement('div');
+        rethinkDiv.className = 'rethink-message';
+        rethinkDiv.textContent = '✨ 우리 다시 생각해 볼까요?';
+        feedbackContent.parentElement.appendChild(rethinkDiv);
       } else {
         feedbackContent.innerHTML = feedbackHTML;
         const existingRethink = feedbackContent.parentElement.querySelector('.rethink-message');
@@ -488,6 +534,10 @@
         </div>
       `;
     }
+
+    // 페이지 로드 완료 확인
+    console.log('모든 스크립트 로드 완료!');
+    console.log('버튼 상태:', submitBtn ? '찾음' : '못 찾음');
   </script>
 </body>
 </html>

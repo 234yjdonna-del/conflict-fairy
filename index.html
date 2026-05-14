@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>갈등 해결 요정</title>
+  <style>
+    body {
+      font-family: 'Noto Serif KR', serif;
+      background: #f9f7f4;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .ending-input {
+      margin: 30px 0;
+    }
+
+    .ending-textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 20px;
+      font-size: 16px;
+      font-family: 'Noto Serif KR', serif;
+      border: 2px solid #e0d5c7;
+      border-radius: 10px;
+      resize: vertical;
+    }
+
+    .submit-ending-btn {
+      background: #8b7355;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .submit-ending-btn:hover {
+      background: #6d5a45;
+    }
+
+    .feedback-loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      color: #8b7355;
+    }
+
+    .fairy-feedback {
+      display: none;
+      margin-top: 40px;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .feedback-section {
+      margin: 25px 0;
+    }
+
+    .feedback-section h3 {
+      color: #8b7355;
+      margin-bottom: 15px;
+    }
+
+    .praise-content, .feedback-content {
+      line-height: 1.8;
+      color: #333;
+    }
+
+    .fragment-reward {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .fragment-animation {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    .fragment-animation.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fragment-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .fragment-name {
+      font-size: 24px;
+      color: #8b7355;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>갈등 해결 요정</h1>
+
+  <div class="story-content">
+    <h2>단톡방에서 나만 나가져 있었다</h2>
+    <p>
+      중학교 1학년 3반에는 항상 시끄럽고 웃음이 끊이지 않는 단톡방이 있었다.
+      그런데 어느 날 아침, 단톡방이 사라졌다. 아니, 정확히는 나만 단톡방에서 나가져 있었다.
+    </p>
+    <p>
+      학교에 가보니 분위기가 더 이상했다. 평소처럼 인사하던 친구는 눈을 피했고,
+      가장 친하다고 생각했던 친구는 "나중에 얘기하자…" 라고만 했다.
+    </p>
+    <p>
+      그리고 쉬는 시간, 뒤에서 누군가 이렇게 말했다. "걔 때문에 그런 거 아니야?"
+    </p>
+    <p>
+      그때, 한 친구가 조용히 다가왔다. "사실… 어제 일이 있었어."
+    </p>
+  </div>
+
+  <div class="ending-input">
+    <h3>너의 반짝이는 결말을 적어줘</h3>
+    <textarea class="ending-textarea" placeholder="이야기의 결말을 자유롭게 작성해보세요..."></textarea>
+    <button class="submit-ending-btn">요정에게 보내기</button>
+  </div>
+
+  <div class="feedback-loading">
+    <div>✨</div>
+    <div>요정이 열심히 읽고 있어요...</div>
+  </div>
+
+  <div class="fairy-feedback">
+    <div class="feedback-section">
+      <h3>잘한 점</h3>
+      <div class="praise-content"></div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>한 걸음 더</h3>
+      <div class="feedback-content"></div>
+    </div>
+
+    <div class="fragment-reward"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+
+  <!-- 요정 시스템 -->
+  <script src="simple_fairy_client.js"></script>
+</body>
+</html>
